@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Alimentacion {
+  id              Int         @id(map: "id_alimentacion") @default(autoincrement())
+  id_usuario      Int
+  numero_comida   Int
+  hora            String
+  cantidad_comida Int
+  Usuario         Usuario     @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "id_usuario")
+  Historial       Historial[]
+}
+
+model Historial {
+  id_alimentacion    Int
+  fecha_alimentacion DateTime     @db.Date
+  isCompletado       Boolean
+  id                 Int          @id(map: "id_historial") @default(autoincrement())
+  Alimentacion       Alimentacion @relation(fields: [id_alimentacion], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "id_alimentacion")
+}
+
+model Usuario {
+  id           Int            @id(map: "id_usuario") @default(autoincrement())
+  nombre       String
+  password     String
+  correo       String         @unique(map: "correo")
+  Alimentacion Alimentacion[]
+}
