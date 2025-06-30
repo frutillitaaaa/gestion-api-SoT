@@ -7,12 +7,17 @@ export const getHistoriales = async (req: Request, res: Response) => {
 };
 
 export const getHistorialPorUsuario = async (req: Request, res: Response) => {
-    const id = Number(req.params.id);
-
-    const historial = await prisma.historial.findUnique({
-        where: { id }
-    });
-    res.json(historial);
+    try {
+        const id = Number(req.params.id);
+        console.log(id);
+        const historial = await prisma.historial.findUnique({
+            where: { id }
+        });
+        res.json(historial);
+    } catch (e) {
+        console.error("Error al obtener historial por usuario: ", e);
+    }
+    
 };
 
 export const crearHistorial = async (req: Request, res: Response) => {
@@ -30,4 +35,11 @@ export const updateHistorial = async (req: Request, res: Response) => {
         data    
     });
     res.json(historialActualizado);
+};
+
+export const deleteHistorial = async (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+    const historial = await prisma.historial.delete({
+        where: { id }
+    });
 };
