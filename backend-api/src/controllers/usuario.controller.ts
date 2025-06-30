@@ -27,9 +27,10 @@ export const deleteUsuario = async (req: Request, res: Response) => {
 
 export const updateUsuario = async (req: Request, res: Response) => {
     const id = Number(req.params.id);
+    const { id: _, ...data } = req.body;
     const usuarioActualizado =  await prisma.usuario.update({
         where: { id },
-        data: req.body     
+        data     
     });
     res.json(usuarioActualizado);
 };
