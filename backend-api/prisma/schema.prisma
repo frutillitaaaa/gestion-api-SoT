@@ -14,8 +14,11 @@ model Alimentacion {
   numero_comida   Int
   hora            String
   cantidad_comida Int
+
   Usuario         Usuario     @relation(fields: [id_usuario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "id_usuario")
   Historial       Historial[]
+
+  @@unique([id_usuario, numero_comida])
 }
 
 model Historial {

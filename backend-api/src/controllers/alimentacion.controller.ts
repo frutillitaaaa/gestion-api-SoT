@@ -5,15 +5,15 @@ import { markAsUntransferable } from 'worker_threads';
 //obtener alimentaciones para cada usuario
 export const getAlimentaciones = async (req: Request, res: Response):Promise<void> => {
     try {
-        const userId = Number(req.params.id);
-        if (isNaN(userId)) {
-            res.status(400).json({ error: 'El ID de usuario no es válido' });
-            return;
-        }
+        const id_usuario = Number(req.params.id_usuario);
+    if (isNaN(id_usuario)) {
+      res.status(400).json({ error: 'ID de usuario no válido' });
+      return;
+    }
 
         const alimentaciones = await prisma.alimentacion.findMany({
             where: { 
-                id_usuario: userId
+                id_usuario: id_usuario
             }
         }); 
         res.json(alimentaciones);
@@ -25,30 +25,45 @@ export const getAlimentaciones = async (req: Request, res: Response):Promise<voi
 };
 
 //crear horario de alimentación para cada usuario
-export const createAlimentacion = async (req: Request, res: Response) => {
-    try {
-        const userId = Number(req.params.id);
-        console.log(userId);
-    if (isNaN(userId)) {
-        res.status(400).json({ error: 'El ID de usuario no es válido' });
-        return;
+export const createAlimentacion = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const id_usuario = Number(req.params.id_usuario);
+    if (isNaN(id_usuario)) {
+      res.status(400).json({ error: 'ID de usuario no válido' });
+      return;
     }
-    const alimentacion = await prisma.alimentacion.create({ 
-        data: {
-            Usuario: {
-                connect: {
-                    id: userId
-                }
-            },
-            ...req.body
+
+    const { numero_comida, hora, cantidad_comida } = req.body;
+
+    const alimentacion = await prisma.alimentacion.upsert({
+      where: {
+        id_usuario_numero_comida: {
+          id_usuario,
+          numero_comida
         }
+      },
+      update: {
+        hora,
+        cantidad_comida
+      },
+      create: {
+        id_usuario,
+        numero_comida,
+        hora,
+        cantidad_comida
+      }
     });
-    res.status(201).json(alimentacion);
-    } catch(e) {
-        console.error("Error al crear alimentacion: ", e);
-    }
-    
-}
+
+    res.status(201).json(alimentacion); 
+  } catch (e) {
+    console.error("Error al crear/actualizar alimentación:", e);
+    res.status(500).json({ error: "Error interno" }); 
+  }
+};
+
 
 export const updateAlimentacion = async (req: Request, res: Response) => {
     const id = Number(req.params.id);

@@ -1,16 +1,16 @@
 import { Router } from "express";
+import type { RequestHandler } from 'express';
 import {
-    getAlimentaciones,
-    createAlimentacion,
-    updateAlimentacion,
-    deleteAlimentacion,
-
+  createAlimentacion,
+  deleteAlimentacion,
+  getAlimentaciones,
+  updateAlimentacion
 } from "../controllers/alimentacion.controller";
 
 const router = Router();
 
-router.get('/:id', getAlimentaciones);
-router.post('/:id', createAlimentacion);
+router.get('/usuario/:id_usuario/alimentaciones', getAlimentaciones);
+router.post('/usuario/:id_usuario/alimentaciones', createAlimentacion as RequestHandler);
 router.put('/:id', updateAlimentacion);
 router.delete('/:id', deleteAlimentacion);
 
